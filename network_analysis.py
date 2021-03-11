@@ -3,9 +3,6 @@ import collections
 import matplotlib.pyplot as plt
 from pyvis.network import Network
 
-'''
-Uncomment lines 
-'''
 
 def counter_scatter_plot(values, *, title="Title", plot_type=plt.loglog):
     value_counts = collections.Counter(values)
@@ -48,15 +45,6 @@ def print_stats(graph):
     print("------------------------------------------")
 
 
-def do_analysis(graph):
-    print_stats(graph)
-
-    # network visualisation
-
-    # net = Network(height=720, width=1400)
-    # net.from_nx(graph)
-    # net.show("netscience.html")
-
 def run():
     graph = nx.read_gml("./res/netscience.gml", label="id")
     nodes = len(nx.nodes(graph))
@@ -64,10 +52,15 @@ def run():
     er_graph = nx.fast_gnp_random_graph(nodes, 0.0025)  # random graph using Erdos-Renyi model
     ba_graph = nx.barabasi_albert_graph(nodes, 2)  # random graph using Barabasi-Albert model
 
-    # print_stats(graph)
+    print_stats(graph)
     # print_stats(er_graph)
     # print_stats(ba_graph)
 
+    # network visualisation
+
+    # net = Network(height=720, width=1400)
+    # net.from_nx(graph)
+    # net.show("netscience.html")
 
 
 run()
