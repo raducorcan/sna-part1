@@ -8,20 +8,20 @@ def counter_scatter_plot(values, *, title="Title", plot_type=plt.loglog):
     value_counts = collections.Counter(values)
     value_counts = sorted(value_counts.items())
     x, y = zip(*value_counts)
-    plot_type(x, y, 'go')
+    plot_type(x, y)
     plt.title(title)
     plt.show()
 
 
 def plot_distributions(graph):
     degs = list(map(lambda x: x[1], nx.degree(graph)))
-    counter_scatter_plot(degs, title="Degree distribution")
+    counter_scatter_plot(degs, title="Degree distribution", plot_type=plt.bar)
 
     clus_coefs = nx.clustering(graph).values()
     counter_scatter_plot(clus_coefs, title="Clustering coefficient distribution")
 
     betwn_centr = nx.betweenness_centrality(graph).values()
-    counter_scatter_plot(betwn_centr, title="Betweenness centrality distribution")
+    counter_scatter_plot(betwn_centr, title="Betweenness centrality distribution", plot_type=plt.plot)
 
     comp_lens = [len(comp) for comp in nx.connected_components(graph)]
     counter_scatter_plot(comp_lens, title="Connected components size distribution")
@@ -62,5 +62,3 @@ def run():
     # net.from_nx(graph)
     # net.show("netscience.html")
 
-
-run()

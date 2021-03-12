@@ -1,4 +1,5 @@
 backcall==0.2.0
+beautifulsoup4==4.9.3
 colorama==0.4.4
 cycler==0.10.0
 decorator==4.4.2
@@ -23,7 +24,9 @@ python-dateutil==2.8.1
 pyvis==0.1.9
 scipy==1.6.1
 six==1.15.0
+soupsieve==2.2
 traitlets==5.0.5
 typing-extensions==3.7.4.3
+urllib3==1.26.3
 wcwidth==0.2.5
 zipp==3.4.1
