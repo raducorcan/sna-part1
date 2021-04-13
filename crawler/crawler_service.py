@@ -4,9 +4,9 @@ from bs4 import BeautifulSoup
 
 urls = [
     'http://www.cdep.ro/pls/proiecte/upl_pck.lista?cam=2&anp=2020',
-    # 'http://www.cdep.ro/pls/proiecte/upl_pck.lista?cam=2&anp=2019',
-    # 'http://www.cdep.ro/pls/proiecte/upl_pck.lista?cam=2&anp=2018',
-    # 'http://www.cdep.ro/pls/proiecte/upl_pck.lista?cam=2&anp=2017',
+    'http://www.cdep.ro/pls/proiecte/upl_pck.lista?cam=2&anp=2019',
+    'http://www.cdep.ro/pls/proiecte/upl_pck.lista?cam=2&anp=2018',
+    'http://www.cdep.ro/pls/proiecte/upl_pck.lista?cam=2&anp=2017',
 ]
 
 base_url = "http://www.cdep.ro/pls/proiecte"
@@ -68,14 +68,39 @@ def get_initiators(law_project_url, names_dict, edges):
             edges[dict_key] += 1
 
 
+def crawl_party(names, party_dict):
+    for query in names.keys():
+        url = f'http://www.cdep.ro/pls/parlam/structura.mp?{query}'
+        soup = create_soup_from_url(url)
+        hyperlinks = soup.find_all("a")
+        for a in hyperlinks:
+            if 'structura.fp' in a['href']:
+                party_dict[query] = a.string
+                print(a.string)
+                break
+
+
 def save_to_json(data, filename):
     with open(filename, 'w') as outfile:
         json.dump(data, outfile)
 
 
 _names_dict = {}
+_party_dict = {}
 _edges = {}
+
+
 data = crawl_data(urls, _names_dict, _edges)
 
-save_to_json(data, "edges.json")
-save_to_json(_names_dict, "names.json")
+save_to_json(data, "edges.jsons")
+save_to_json(_names_dict, "names.jsons")
+
+def open_json(filename):
+    with open(filename, 'r') as infile:
+        data = json.load(infile)
+    return data
+
+
+# _names_dict = open_json('names.jsons')
+# crawl_party(_names_dict, _party_dict)
+# save_to_json(_party_dict, "parties.jsons")
