@@ -17,25 +17,33 @@ def best_nodes(graph: nx.Graph):
     betwn_centr = nx.betweenness_centrality(graph)
     best_betwn_centr = max(betwn_centr, key=lambda x: betwn_centr[x])
     print(
-        f"Most important node according to betweenness centrality is node {graph.nodes[best_betwn_centr]['label']} with betweenness centrality {betwn_centr[best_betwn_centr]}")
+        f"Most important node according to betweenness centrality is node {graph.nodes[best_betwn_centr]['label']} with betweenness centrality {betwn_centr[best_betwn_centr]}"
+        if 'label' in graph.nodes[best_betwn_centr] else
+        f"Most important node according to betweenness centrality has betweenness centrality {betwn_centr[best_betwn_centr]}")
     graph.nodes[best_betwn_centr]['color'] = 'green'
 
     close_centr = nx.closeness_centrality(graph)
     best_close_centr = max(close_centr, key=lambda x: close_centr[x])
     print(
-        f"Most important node according to closeness centrality is node {graph.nodes[best_close_centr]['label']} with closeness centrality {close_centr[best_close_centr]}")
+        f"Most important node according to closeness centrality is node {graph.nodes[best_close_centr]['label']} with closeness centrality {close_centr[best_close_centr]}"
+        if 'label' in graph.nodes[best_close_centr] else
+        f"Most important node according to closeness centrality has closeness centrality {betwn_centr[best_close_centr]}")
     graph.nodes[best_close_centr]['color'] = 'yellow'
 
     deg_centr = nx.degree_centrality(graph)
     best_deg_centr = max(deg_centr, key=lambda x: deg_centr[x])
     print(
-        f"Most important node according to degree centrality is node {graph.nodes[best_deg_centr]['label']} with degree centrality {deg_centr[best_deg_centr]}")
+        f"Most important node according to degree centrality is node {graph.nodes[best_deg_centr]['label']} with degree centrality {deg_centr[best_deg_centr]}"
+        if 'label' in graph.nodes[best_deg_centr] else
+        f"Most important node according to degree centrality has degree centrality {betwn_centr[best_deg_centr]}")
     graph.nodes[best_deg_centr]['color'] = 'magenta'
 
     eigen_centr = nx.eigenvector_centrality(graph)
     best_eigen_centr = max(eigen_centr, key=lambda x: eigen_centr[x])
     print(
-        f"Most important node according to eigenvector centrality is node {graph.nodes[best_eigen_centr]['label']} with eigenvector  centrality {eigen_centr[best_eigen_centr]}")
+        f"Most important node according to eigenvector centrality is node {graph.nodes[best_eigen_centr]['label']} with eigenvector  centrality {eigen_centr[best_eigen_centr]}"
+        if 'label' in graph.nodes[best_eigen_centr] else
+        f"Most important node according to eigenvector centrality has eigenvector centrality {betwn_centr[best_eigen_centr]}")
     graph.nodes[best_eigen_centr]['color'] = 'red'
 
 
