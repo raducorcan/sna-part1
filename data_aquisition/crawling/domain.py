@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 
 
 @dataclass
@@ -10,12 +10,16 @@ class RawInitiator:
     def to_dict(self):
         return {'name': self.name, 'href': self.href}
 
+    @staticmethod
+    def from_dict(kwargs):
+        return RawInitiator(**kwargs)
+
 
 @dataclass
 class RawLawProject:
     id: str
     description: str
-    initiators: List[RawInitiator]
+    initiators: Dict[str, List[RawInitiator]]
     senators_date: str
     deputies_date: str
 
@@ -23,7 +27,13 @@ class RawLawProject:
         return {
             'id': self.id,
             'description': self.description,
-            'initiators': list(map(RawInitiator.to_dict, self.initiators)),
+            'initiators': {k: list(map(RawInitiator.to_dict, v)) for k, v in self.initiators.items()},
             'senators_date': self.senators_date,
             'deputies_date': self.deputies_date
         }
+
+    @staticmethod
+    def from_dict(kwargs: dict):
+        initiators = {k: list(map(RawInitiator.from_dict, v)) for k, v in kwargs['initiators'].items()}
+        kwargs.pop('initiators')
+        return RawLawProject(**kwargs, initiators=initiators)

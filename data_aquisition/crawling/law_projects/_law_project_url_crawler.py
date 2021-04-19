@@ -1,7 +1,10 @@
+import logging
+
 from data_aquisition.crawling.utils import create_soup_from_url
 
 
 def _get_law_project_urls(year_url):
+    logging.info(f"Getting law project urls from {year_url}")
     soup = create_soup_from_url(year_url)
     hyperlinks = soup.select(
         'body > table > tr > td:nth-child(2) > table:nth-child(2) > tr > td:nth-child(2) > p > p > table tr > td:nth-child(2) a')

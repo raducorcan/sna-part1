@@ -1,10 +1,13 @@
+import logging
+
+from bs4 import BeautifulSoup
+
 from data_aquisition.crawling.domain import RawInitiator, RawLawProject
 from data_aquisition.crawling.utils import create_soup_from_url
-from jsons.utils import save_to_json
 
 
 def _get_law_project_from_url(law_project_url):
-    print(f"Processing law project from '{law_project_url}'.")
+    logging.debug(f"Processing law project from '{law_project_url}'.")
 
     soup = create_soup_from_url(law_project_url)
 
@@ -12,19 +15,20 @@ def _get_law_project_from_url(law_project_url):
         law_project_id, description = _get_law_project_id_and_description(soup)
     except Exception as exc:
         law_project_id, description = '', ''
-        print(f'Error while trying to extract law_project_id and description from {law_project_url}:{str(exc)}')
+        logging.warning(
+            f'Error while trying to extract law_project_id and description from {law_project_url}: {str(exc)}')
 
     try:
         initiators = _get_law_project_initiators(soup)
     except Exception as exc:
         initiators = []
-        print(f'Error while trying to extract initiators from {law_project_url}:{str(exc)}')
+        logging.warning(f'Error while trying to extract initiators from {law_project_url}: {str(exc)}')
 
     try:
         senators_date, deputies_date = _get_law_project_creation_date(soup)
     except Exception as exc:
         senators_date, deputies_date = '', ''
-        print(f'Error while trying to extract date from {law_project_url}:{str(exc)}')
+        logging.warning(f'Error while trying to extract date from {law_project_url}: {str(exc)}')
 
     return RawLawProject(law_project_id, description, initiators, senators_date, deputies_date)
 
@@ -55,18 +59,27 @@ def _get_law_project_id_and_description(soup):
     return law_project_id, description
 
 
-def _get_law_project_initiators(soup):
-    col1 = soup.find("td", string="Initiator:")
-    hyperlinks = col1.parent.select("td:nth-child(2) a")
+def _get_law_project_initiators(soup: BeautifulSoup):
+    col = soup.find("td", string='Initiator:')
+    table = col.parent.find("table")
+    if table is None:
+        return {}  # Guvern
 
-    initiators = []
+    rows = table.find_all("tr")
 
-    for a in hyperlinks:
-        name = a.string.replace(u'\xa0', u' ')
-        href = a["href"]
-        url = f'http://www.cdep.ro{href}'
+    initiators = {}
+    for row in rows:
+        text = row.select_one("td:nth-child(1)")
+        hyperlinks = row.select("td:nth-child(2) a")
+        current_row_initiators = []
+        for a in hyperlinks:
+            name = a.string.replace(u'\xa0', u' ')
+            href = a["href"]
+            url = f'http://www.cdep.ro{href}'
 
-        initiators.append(RawInitiator(name, url))
+            current_row_initiators.append(RawInitiator(name, url))
+
+        initiators[text.text] = current_row_initiators
 
     return initiators
 
@@ -74,4 +87,3 @@ def _get_law_project_initiators(soup):
 if __name__ == '__main__':
     pl = _get_law_project_from_url('http://www.cdep.ro/pls/proiecte/upl_pck.proiect?cam=2&idp=15883')
     print(pl.to_dict())
-
