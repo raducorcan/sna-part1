@@ -2,6 +2,7 @@ from typing import List
 
 import networkx as nx
 
+from data_aquisition.grapher.replace import sanitize_string
 from data_aquisition.interpreting.domain import LawProject
 from jsons.utils import load_from_json
 
@@ -19,9 +20,11 @@ def load_file(file):
 def generate_nodes(projects: List[LawProject], nodes_accumulator: dict):
     for project in projects:
         for initiator in project.initiators:
-            nodes_accumulator[f"{initiator.name} {initiator.party}"] = {
-                "name": initiator.name,
-                "party": initiator.party,
+            name = sanitize_string(initiator.name)
+            party = sanitize_string(initiator.party)
+            nodes_accumulator[f"{name} {party}"] = {
+                "name": name,
+                "party": party,
                 "url": initiator.mp
             }
 
@@ -34,8 +37,14 @@ def generate_edges(projects: List[LawProject], edges_accumulator: dict):
                 init1 = project.initiators[i]
                 init2 = project.initiators[j]
 
-                name_id1 = f"{init1.name} {init1.party}"
-                name_id2 = f"{init2.name} {init2.party}"
+                name1 = sanitize_string(init1.name)
+                party1 = sanitize_string(init1.party)
+
+                name2 = sanitize_string(init2.name)
+                party2 = sanitize_string(init2.party)
+
+                name_id1 = f"{name1} {party1}"
+                name_id2 = f"{name2} {party2}"
 
                 edge_id_lst = [name_id1, name_id2]
                 edge_id_lst.sort()
